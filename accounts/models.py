@@ -40,6 +40,7 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'mobile'
     REQUIRED_FIELDS = []
+    backend = "accounts.backends.MobileBackend"
 
     def __str__(self):
         return str(self.mobile)
