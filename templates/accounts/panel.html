@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Account's Panel</title>
 </head>
 <body>
-$END$
+{% if request.user.is_authenticated %}
+    <div>
+        <h1>Hey {{ request.user }}, Welcome!</h1>
+    </div>
+{% else %}
+    <div>
+        <h1>Permission Denied! <a href="{% url 'accounts:login' %}">Login</a> Required!</h1>
+    </div>
+{% endif %}
+
 </body>
 </html>
