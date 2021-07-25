@@ -4,6 +4,12 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model, login
 from django.views.generic import FormView
 from django.contrib import messages
+<< << << < Updated
+upstream
+== == == =
+from django.contrib.auth.decorators import user_passes_test, login_required
+>> >> >> > Stashed
+changes
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
 from accounts.utils import otp_random_generator, send_otp, is_expired
@@ -18,12 +24,18 @@ class UserLoginView(FormView):
     def post(self, request, *args, **kwargs):
         login_form = self.form_class(request.POST)
         if login_form.is_valid():
-            user = get_object_or_404(User, **login_form.cleaned_data)
-            if user:
+            try:
+                user = get_object_or_404(User, **login_form.cleaned_data)
+                otp = otp_random_generator()
+                send_otp(user.mobile, otp)
+                user.otp = otp
+                user.save()
+
                 login(request, user)
-                return HttpResponseRedirect(reverse("accounts:panel"))
-            return HttpResponseRedirect(reverse("accounts:login"))
-        return HttpResponseRedirect(reverse("accounts:login"))
+                request.session['user_mobile'] = user.mobile
+                return HttpResponseRedirect(reverse("accounts:otp_verification"))
+            except Http404:
+                return HttpResponseRedirect(reverse("accounts:login"))
 
 
 class UserRegistrationView(FormView):
