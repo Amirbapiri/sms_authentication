@@ -7,6 +7,7 @@ from django.contrib import messages
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
 from accounts.utils import otp_random_generator, send_otp, is_expired
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -64,13 +65,13 @@ class UserRegistrationView(FormView):
             return HttpResponseRedirect(reverse("accounts:signup"))
 
 
+@login_required()
 def verify_otp(request):
-    mobile = request.session.get("user_mobile")
+    user = get_object_or_404(User, mobile=request.user)
     if request.method == "POST":
         try:
-            user = get_object_or_404(User, mobile=mobile)
             # Check if otp has been expired or not
-            if is_expired(mobile):
+            if is_expired(user.mobile):
                 messages.add_message(request, messages.ERROR, "OTP has been expired, try again!")
                 return HttpResponseRedirect(reverse("accounts:signup"))
             if not user.otp == int(request.POST.get("otp")):
@@ -85,7 +86,7 @@ def verify_otp(request):
             return HttpResponseRedirect(reverse("accounts:signup"))
     verification_form = OTPVerificationForm()
     return render(request, "registration/verify.html",
-                  {"verification_form": verification_form, "user_mobile": mobile})
+                  {"verification_form": verification_form, "user_mobile": user.mobile})
 
 
 def panel(request):
