@@ -27,7 +27,6 @@ class UserLoginView(FormView):
                 user.save()
 
                 login(request, user)
-                request.session['user_mobile'] = user.mobile
                 return HttpResponseRedirect(reverse("accounts:otp_verification"))
             except Http404:
                 return HttpResponseRedirect(reverse("accounts:login"))
@@ -47,7 +46,6 @@ class UserRegistrationView(FormView):
 
             user.otp = otp
             user.save()
-            request.session['user_mobile'] = user.mobile
             return HttpResponseRedirect(reverse("accounts:otp_verification"))
         except Http404:
             signup_form = self.form_class(request.POST)
@@ -55,17 +53,15 @@ class UserRegistrationView(FormView):
                 user = signup_form.save(commit=False)
 
                 otp = otp_random_generator()
-                send_otp(mobile, otp)
+                send_otp(user.mobile, otp)
 
                 user.otp = otp
                 user.is_active = False
                 user.save()
-                request.session['user_mobile'] = user.mobile
                 return HttpResponseRedirect(reverse("accounts:otp_verification"))
             return HttpResponseRedirect(reverse("accounts:signup"))
 
 
-@login_required()
 def verify_otp(request):
     user = get_object_or_404(User, mobile=request.user)
     if request.method == "POST":
