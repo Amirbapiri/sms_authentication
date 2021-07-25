@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -128,3 +129,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = "accounts.User"
+
+# Environment variable configuration
+env = environ.Env()
+environ.Env.read_env()
+
+KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
