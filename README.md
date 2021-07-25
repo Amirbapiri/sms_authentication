@@ -5,3 +5,4 @@
 - [ ] Remove code duplication
 - [ ] Write tests
 - [ ] Create a base template
+- [ ] Prevent accessing to verification page directly
