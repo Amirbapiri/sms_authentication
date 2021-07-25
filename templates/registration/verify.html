@@ -1,26 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Verify OTP</title>
-</head>
-<body>
-<form method="post">
-    {% csrf_token %}
-    {% if form.errors %}
-        <p>{{ form.errors }}</p>
-    {% endif %}
+{% extends '_base.html' %}
 
-    <h2>Your phone number: {{ user_mobile }}</h2>
-    <hr>
-    {% if messages %}
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    {% endif %}
-    {{ verification_form.as_p }}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <p>{{ form.errors }}</p>
+        {% endif %}
 
-    <button type="submit">Verify</button>
-</form>
-</body>
-</html>
+        <h2>Your phone number: {{ user_mobile }}</h2>
+        <hr>
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+        {{ verification_form.as_p }}
+
+        <button type="submit">Verify</button>
+    </form>
+{% endblock %}

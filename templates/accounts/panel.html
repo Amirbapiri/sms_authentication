@@ -1,19 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Account's Panel</title>
-</head>
-<body>
-{% if request.user.is_authenticated %}
-    <div>
-        <h1>Hey {{ request.user }}, Welcome!</h1>
-    </div>
-{% else %}
-    <div>
-        <h1>Permission Denied! <a href="{% url 'accounts:login' %}">Login</a> Required!</h1>
-    </div>
-{% endif %}
-
-</body>
-</html>
+{% extends "_base.html" %}
+{% block content %}
+    {% if request.user.is_authenticated %}
+        <div>
+            <h1>Hey {{ request.user }}, Welcome!</h1>
+        </div>
+    {% else %}
+        <div>
+            <h1>Permission Denied! <a href="{% url 'accounts:login' %}">Login</a> Required!</h1>
+        </div>
+    {% endif %}
+{% endblock %}
