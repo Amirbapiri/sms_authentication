@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+        <p>{{ form.errors }}</p>
+    {% endif %}
+    <h2>Your phone number: {{ user_mobile }}</h2>
+    <hr>
+    {{ verification_form.as_p }}
+
+    <button type="submit">Verify</button>
+</form>
+</body>
+</html>
