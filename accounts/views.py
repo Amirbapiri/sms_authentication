@@ -7,7 +7,6 @@ from django.contrib import messages
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
 from accounts.utils import otp_random_generator, send_otp, is_expired
-from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
