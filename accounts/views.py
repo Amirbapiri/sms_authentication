@@ -51,7 +51,6 @@ class UserRegistrationView(FormView):
             signup_form = self.form_class(request.POST)
             if signup_form.is_valid():
                 user = signup_form.save(commit=False)
-
                 otp = otp_random_generator()
                 send_otp(user.mobile, otp)
 
@@ -63,26 +62,23 @@ class UserRegistrationView(FormView):
 
 
 def verify_otp(request):
-    user = get_object_or_404(User, mobile=request.user)
     if request.method == "POST":
         try:
+            user = get_object_or_404(User, otp=request.POST.get("otp"))
             # Check if otp has been expired or not
             if is_expired(user.mobile):
                 messages.add_message(request, messages.ERROR, "OTP has been expired, try again!")
                 return HttpResponseRedirect(reverse("accounts:signup"))
-            if not user.otp == int(request.POST.get("otp")):
-                messages.add_message(request, messages.ERROR, "OTP is incorrect.")
-                return HttpResponseRedirect(reverse("accounts:otp_verification"))
             user.is_active = True
             user.save()
             login(request, user)
             return HttpResponseRedirect(reverse("accounts:panel"))
         except Http404:
-            messages.add_message(request, messages.ERROR, "Oops! Something went wrong!")
-            return HttpResponseRedirect(reverse("accounts:signup"))
+            messages.add_message(request, messages.ERROR, "OTP is incorrect.")
+            return HttpResponseRedirect(reverse("accounts:otp_verification"))
     verification_form = OTPVerificationForm()
     return render(request, "registration/verify.html",
-                  {"verification_form": verification_form, "user_mobile": user.mobile})
+                  {"verification_form": verification_form})
 
 
 def panel(request):

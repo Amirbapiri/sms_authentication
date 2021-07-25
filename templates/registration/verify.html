@@ -6,9 +6,6 @@
         {% if form.errors %}
             <p>{{ form.errors }}</p>
         {% endif %}
-
-        <h2>Your phone number: {{ user_mobile }}</h2>
-        <hr>
         {% if messages %}
             {% for message in messages %}
                 {{ message }}
