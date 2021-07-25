@@ -4,12 +4,6 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model, login
 from django.views.generic import FormView
 from django.contrib import messages
-<< << << < Updated
-upstream
-== == == =
-from django.contrib.auth.decorators import user_passes_test, login_required
->> >> >> > Stashed
-changes
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
 from accounts.utils import otp_random_generator, send_otp, is_expired
