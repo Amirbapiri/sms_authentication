@@ -59,6 +59,17 @@ class UserRegistrationView(FormView):
 
 def verify_otp(request):
     mobile = request.session.get("user_mobile")
+    if request.method == "POST":
+        try:
+            user = get_object_or_404(User, mobile=mobile)
+            if not user.otp == int(request.POST.get("otp")):
+                return HttpResponseRedirect(reverse("accounts:signup"))
+            user.is_active = True
+            user.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse("accounts:panel"))
+        except Http404:
+            return HttpResponseRedirect(reverse("accounts:signup"))
     verification_form = OTPVerificationForm()
     return render(request, "registration/verify.html",
                   {"verification_form": verification_form, "user_mobile": mobile})
