@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model, login
 from django.views.generic import FormView
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
-from accounts.utils import otp_random_generator, send_otp
+from accounts.utils import otp_random_generator, send_otp, is_expired
 
 User = get_user_model()
 
@@ -62,6 +62,9 @@ def verify_otp(request):
     if request.method == "POST":
         try:
             user = get_object_or_404(User, mobile=mobile)
+            # Check if otp has been expired or not
+            if not is_expired(mobile):
+                return HttpResponseRedirect(reverse("accounts:signup"))
             if not user.otp == int(request.POST.get("otp")):
                 return HttpResponseRedirect(reverse("accounts:signup"))
             user.is_active = True

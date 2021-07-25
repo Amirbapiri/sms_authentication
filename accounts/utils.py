@@ -1,7 +1,12 @@
+import datetime
 from random import randint
 
 from kavenegar import *
+from django.http import Http404
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+
+from django.contrib.auth import get_user_model
 
 
 def otp_random_generator():
@@ -21,3 +26,14 @@ def send_otp(mobile, otp):
         print(e)
     except HTTPException as e:
         print(e)
+
+
+def is_expired(mobile):
+    try:
+        user = get_object_or_404(get_user_model(), mobile=mobile)
+        diff_time = datetime.datetime.now().astimezone() - user.otp_create_time
+        if diff_time.seconds > 30:
+            return False
+        return True
+    except Http404:
+        return False
