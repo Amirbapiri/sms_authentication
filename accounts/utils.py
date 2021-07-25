@@ -21,7 +21,8 @@ def send_otp(mobile, otp):
             'receptor': [mobile, ],
             'message': f'Your OPT is: {otp}',
         }
-        response = api.sms_send(params)
+        print(otp)
+        # response = api.sms_send(params)
     except APIException as e:
         print(e)
     except HTTPException as e:
@@ -33,7 +34,7 @@ def is_expired(mobile):
         user = get_object_or_404(get_user_model(), mobile=mobile)
         diff_time = datetime.datetime.now().astimezone() - user.otp_create_time
         if diff_time.seconds > 30:
-            return False
-        return True
+            return True
+        return False
     except Http404:
         return False

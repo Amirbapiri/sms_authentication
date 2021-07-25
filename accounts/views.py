@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model, login
 from django.views.generic import FormView
+from django.contrib import messages
 
 from accounts.forms import LoginForm, RegistrationForm, OTPVerificationForm
 from accounts.utils import otp_random_generator, send_otp, is_expired
@@ -63,15 +64,18 @@ def verify_otp(request):
         try:
             user = get_object_or_404(User, mobile=mobile)
             # Check if otp has been expired or not
-            if not is_expired(mobile):
+            if is_expired(mobile):
+                messages.add_message(request, messages.ERROR, "OTP has been expired, try again!")
                 return HttpResponseRedirect(reverse("accounts:signup"))
             if not user.otp == int(request.POST.get("otp")):
-                return HttpResponseRedirect(reverse("accounts:signup"))
+                messages.add_message(request, messages.ERROR, "OTP is incorrect.")
+                return HttpResponseRedirect(reverse("accounts:otp_verification"))
             user.is_active = True
             user.save()
             login(request, user)
             return HttpResponseRedirect(reverse("accounts:panel"))
         except Http404:
+            messages.add_message(request, messages.ERROR, "Oops! Something went wrong!")
             return HttpResponseRedirect(reverse("accounts:signup"))
     verification_form = OTPVerificationForm()
     return render(request, "registration/verify.html",
